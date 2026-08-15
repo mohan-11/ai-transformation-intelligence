@@ -1,0 +1,8 @@
+[project]
+name = "ai-transformation-intelligence"
+version = "0.1.0"
+description = "AI Transformation Strategy Intelligence"
+requires-python = ">=3.11"
+
+[tool.vercel]
+entrypoint = "backend.app.main:app"
