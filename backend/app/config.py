@@ -7,14 +7,32 @@ application run fully offline (deterministic heuristic LLM + TF-IDF embeddings
 """
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent          # .../backend/app
 PROJECT_ROOT = BACKEND_DIR.parent.parent               # .../ (repo root)
-DATA_DIR = PROJECT_ROOT / "data"
+
+
+def _writable_path(*parts: str) -> Path:
+    base = PROJECT_ROOT / Path(*parts)
+    try:
+        base.parent.mkdir(parents=True, exist_ok=True)
+        probe = base.parent / ".write-check"
+        probe.touch(exist_ok=True)
+        probe.unlink(missing_ok=True)
+        return base
+    except OSError:
+        temp_root = Path("/tmp") / "ai-transformation-intelligence"
+        temp_root.mkdir(parents=True, exist_ok=True)
+        return temp_root / Path(*parts)
+
+
+DATA_DIR = _writable_path("data")
 
 
 class Settings(BaseSettings):
@@ -29,12 +47,12 @@ class Settings(BaseSettings):
     api_prefix: str = "/api"
 
     # --- Database ---
-    database_url: str = f"sqlite:///{DATA_DIR / 'app.db'}"
+    database_url: str = Field(default_factory=lambda: f"sqlite:///{_writable_path('data', 'app.db')}")
 
     # --- Paths ---
-    chroma_dir: str = str(DATA_DIR / "chroma")
-    knowledge_dir: str = str(DATA_DIR / "knowledge")
-    upload_dir: str = str(DATA_DIR / "uploads")
+    chroma_dir: str = Field(default_factory=lambda: str(_writable_path('data', 'chroma')))
+    knowledge_dir: str = Field(default_factory=lambda: str(_writable_path('data', 'knowledge')))
+    upload_dir: str = Field(default_factory=lambda: str(_writable_path('data', 'uploads')))
 
     # --- LLM ---
     llm_provider: str = "auto"        # auto | openai | deepseek | gemini | ollama | heuristic
