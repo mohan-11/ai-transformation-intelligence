@@ -26,7 +26,17 @@ auditable.
 
 ## 2. Architecture
 
-```
+![System Architecture](https://raw.githubusercontent.com/mohan-11/ai-transformation-intelligence/main/docs/architecture-diagram.png)
+
+The system follows this layered design:
+
+- User Interface: Streamlit dashboard
+- Application / API Layer: FastAPI routers with Pydantic validation
+- AI Intelligence Layer: orchestrator, opportunity generator, explainer, LLM abstraction, deterministic scoring engine
+- Data & Knowledge Layer: SQLAlchemy/SQLite, embeddings, vector store, RAG pipeline
+- External Research / Data: optional live external sources with offline fallback to stored knowledge
+
+```text
 USER INTERFACE (Streamlit dashboard)
         ↓ HTTP/JSON
 APPLICATION / API LAYER (FastAPI routers, Pydantic validation)
