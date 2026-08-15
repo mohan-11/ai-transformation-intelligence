@@ -1,0 +1,10 @@
+# Optional "full" stack — enables semantic embeddings and a dedicated
+# vector database. The app works without these (TF-IDF embeddings +
+# in-memory vector store), so install only when you want the upgrade.
+# Both are auto-detected at runtime and used when importable.
+
+# Semantic embeddings (pulls in torch — ~large install)
+sentence-transformers>=2.5
+
+# Dedicated vector database
+chromadb>=0.4.22,<1.0
